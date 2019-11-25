@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>员工明细</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+<h1 align="center">公司员工明细</h1>
+<table id="empsTable" class="table table-bordered table-hover">
+    <tr>
+        <th></th>
+        <th>姓名</th>
+        <th>出生日期</th>
+        <th>身份证</th>
+        <th>学历</th>
+        <th>部门</th>
+        <th>岗位</th>
+        <th>入职日期</th>
+        <th>参加工作日期</th>
+        <th>用工状态</th>
+        <th>用工形式</th>
+        <th>人员来源</th>
+    </tr>
+
+</table>
+<a href="javascript:void(0)" id="deleteBtn" class="btn btn-primary">删除</a>
+<a href="javascript:void(0)" id="createBtn" class="btn btn-success">新增员工</a>
+<a href="javascript:void(0)" id="updateBtn" class="btn btn-warning">更新</a>
+<div id="msg"></div>
+
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $("#deleteBtn").click(function(){
+            $.ajax({
+                type:"get",
+                url:"",
+                success:function(response){
+                    var result = JSON.parse(response);
+                    if(result.code == 200){
+
+                    }else if(result.code==404){
+                        var msg = '<div class="alert alert-warning"> <a href="#" class="close" data-dismiss="alert">'+
+                            '&times;</a><strong>警告！</strong>删除操作失败</div>';
+                        $("#msg").html(msg);
+                    }
+                }
+            });
+        })
+        //加载基础数据
+        $.ajax({
+            type:"get",
+            url:"http://localhost:8080/EmpFindAllServlet",
+            success:function(response){
+                var emps = JSON.parse(response);
+                for(var i in emps){
+                    var emp = emps[i];
+                    $tr = $("<tr></tr>");
+                    $tr.append($("<td></td>")
+                        .append($("<input></input>")
+                            .attr({"type":"checkbox","value":emp.eno,"name":"enos"})))
+                        .append($("<td></td>").text(emp.ename))
+                        .append($("<td></td>").text(emp.ebirthday))
+                        .append($("<td></td>").text(emp.eid))
+                        .append($("<td></td>").text(emp.eedu))
+                        .append($("<td></td>").text(emp.dno))
+                        .append($("<td></td>").text(emp.jno))
+                        .append($("<td></td>").text(emp.hireday))
+                        .append($("<td></td>").text(emp.jobstartday))
+                        .append($("<td></td>").text(emp.estate))
+                        .append($("<td></td>").text(emp.etype))
+                        .append($("<td></td>").text(emp.efrom));
+                    $("#empsTable").append($tr);
+                }
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>***公司首页</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        .input-group {
+            margin: 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="jumbotron">
+        <h1>欢迎登录李阳国际屠宰场系统</h1>
+        <p>开发人员：李萌威</p>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <form action="http://localhost:8080/UserLoginServlet" method="post"
+              class="bs-example bs-example-form col-xs-offset-2 col-xs-8" role="form">
+            <div class="input-group">
+                <span class="input-group-addon">用户名</span>
+                <input type="text" name="username" id="username" value="LiYang" class="form-control"
+                       placeholder="请输入用户名">
+                <span id="userMsg"></span>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">密&nbsp;&nbsp;&nbsp;码</span>
+                <input name="password" id="password" value="123456" type="password" class="form-control"
+                       placeholder="请输入密码">
+                <span id="pwdMsg"></span>
+            </div>
+            <input type="button" id="loginBtn" value="登录" class="btn btn-primary col-xs-offset-1 col-xs-4"/>
+            <a href="javascript:void(0);" class="btn btn-default col-xs-offset-1 col-xs-4">注册</a>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    $(function () {
+
+        document.querySelector("#password").oninput = function () {
+            var pPattern = /^[a-zA-Z0-9_-]{6,16}$/;
+            if (pPattern.test($("#password").val())) {
+                $("#pwdMsg").text("密码符合格式要求").css({
+                    "color": "green",
+                    "font-size": "12px"
+                });
+            } else {
+                $("#pwdMsg").text("密码不合乎格式要求，请使用大于6位的有效字符").css({
+                    "color": "red",
+                    "font-size": "12px"
+                });
+            }
+        };
+
+
+        $("#username").blur(function () {
+            var uPattern = /^[a-zA-Z][a-zA-Z0-9_-]{5,16}$/;
+            if (uPattern.test($("#username").val())) {
+                $.ajax({
+                    type: "get",
+                    url: "http://localhost:8080/UserExistServlet?username=" + $("#username").val(),
+                    success: function (response) {
+                        console.log(response);
+                        var result = JSON.parse(response);
+                        if (result.code == 200) {
+                            $("#userMsg").text("用户存在").css({
+                                "color": "green",
+                                "font-size": "12px"
+                            });
+                        } else if (result.code == 404) {
+                            $("#userMsg").text("用户不存在").css({
+                                "color": "red",
+                                "font-size": "12px"
+                            });
+                        }
+                    }
+                });
+            } else {
+                $("#userMsg").text("用户名必须大于6位，字母开头，可以使用数字和下划线").css({
+                    "color": "red",
+                    "font-size": "12px"
+                });
+            }
+        });
+        $("#loginBtn").click(function () {
+            $.ajax({
+                type: "post",
+                url: "http://localhost:8080/UserLoginServlet",
+                data: {
+                    "username": $("#username").val(),
+                    "password": $("#password").val()
+                },
+                success: function (response) {
+                    var result = JSON.parse(response);
+
+                    if (result.code == 200) {
+                        window.location.href = "http://localhost:8080/emp.html";
+                    } else if (result.code == 404){
+                        window.location.href="http://localhost:8080/error.html";
+                    }
+                }
+
+            });
+
+        });
+
+
+    });
+</script>
+</body>
+
+</html>
